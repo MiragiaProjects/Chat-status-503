@@ -1,0 +1,37 @@
+#app,
+    #game-wrapper {
+        height: 100vh;
+        width: 100vw;
+    }
+    
+    #app {
+        background-color: aliceblue;
+    }
+    
+    #game-wrapper {
+        display: flex;
+    }
+    
+    #game {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        border-right: 1px solid #555;
+    }
+    
+    #game h2 {
+        background-color: rgb(70, 156, 84);
+        padding: 0.5rem 0.75rem;
+        color: white;
+    }
+    
+    #users {
+        flex-basis: 20%;
+    }
+    
+    #users h2 {
+        background-color: rgb(70, 156, 84);
+        padding: 0.5rem 0.75rem;
+        color: white;
+    }
+
