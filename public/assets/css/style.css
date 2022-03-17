@@ -6,6 +6,7 @@
     
     #app {
         background-color: aliceblue;
+        
     }
     
     #game-wrapper {
@@ -41,10 +42,18 @@
     grid-template-rows: 75px 75px 75px 75px 75px 75px 75px;
     border: 2px solid pink;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    background-image: url("https://drive.google.com/uc?export=download&id=1M42mkJo_ILpyt1penWJLFAGwyycD9oKq");
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        /*text-align: center;*/
+        
+    }
 
+.scoreboard{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 
-
-    /*padding: 5%; */
 }
 
 #virus-icon {
