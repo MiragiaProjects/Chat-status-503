@@ -40,6 +40,10 @@
     grid-template-columns: 75px 75px 75px 75px 75px 75px 75px 75px;
     grid-template-rows: 75px 75px 75px 75px 75px 75px 75px;
     border: 2px solid pink;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+
+
     /*padding: 5%; */
 }
 
