@@ -35,3 +35,18 @@
         color: white;
     }
 
+.container {
+    display: grid;
+    grid-template-columns: 75px 75px 75px 75px 75px 75px 75px 75px;
+    grid-template-rows: 75px 75px 75px 75px 75px 75px 75px;
+    border: 2px solid pink;
+    /*padding: 5%; */
+}
+
+#virus-icon {
+    width: 45px;
+    height: 45px;
+    grid-column-start: 4;
+    grid-row-start: 4;
+    margin: auto;
+}
