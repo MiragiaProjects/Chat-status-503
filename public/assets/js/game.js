@@ -39,7 +39,7 @@ setInterval(() => {
   }, randomTime());
 
 
-  // Eventlistner listening after a click on the virus and andding one to the score
+  // Eventlistner listening after a click on the virus and adding one to the score not complete yet
   container.addEventListener("click",(e) =>{
       if(e.target === virus) score++;
   })
