@@ -1,45 +1,44 @@
-const socket = io();
+"use strict";  
+  const socket = io();
+  const container = document.querySelector(".container");
+  const users = document.querySelector(".users");
+  // const usersScore = document.querySelector(".usersCore")
 
-const container = document.querySelector(".container");
-const users = document.querySelector(".usersClass");
-const usersScore = document.querySelector("")
+  const virus = document.createElement("img");
+  virus.setAttribute("id", "virus-icon");
+  virus.setAttribute('style', `grid-column-start: ${randomColumnRow()}; grid-row-start: ${randomColumnRow()}`)
+  virus.setAttribute("src", "assets/icons/corona-virus.svg");
+  container.appendChild(virus);
 
-const virus = document.createElement("img");
-virus.setAttribute("class", "virus");
-virus.setAttribute("src", "../icons/corona-virus.svg");
-
-let score = 0;
-
-const contHeight = container.offsetHeight;
-const contWidth = container.offsetWidth;
-
-
-// A random time generator that randoms a time between 5-10 seconds.
-randomTime(() => {
-    let min = 5;
-    let max = 10;
-        //Generate Random number between 5 - 10
-    let rand = Math.floor(Math.random() * (max - min + 1) + min); 
-    console.log('Wait for ' + rand + ' seconds');
-    setTimeout(randomTime, rand * 1000);
-  });
   
-  // Running the function
-  randomTime();
+
+  let score = 0;
 
 
-  // Virus gets randomized out on the screen on a 5-10 interval
-setInterval(() => {
-    const randTop = Math.random() * (contHeight - 100);
-    const randLeft = Math.random() * (contWidth - 100);
+function randomColumnRow () {
+  return Math.ceil(Math.random() * 8)
+}
+
+const changeVirusPosition = () => {
+    const row = randomColumnRow();
+    const column = randomColumnRow();
   
-    virus.style.position = "absolute";
-    virus.style.top = randTop + "px";
-    virus.style.left = randLeft + "px";
-  }, randomTime());
+    virus.style.gridColumnStart = column;
+    virus.style.gridRowStart = row;
+  }
+
+    // Testfunction för att kolla rörelsen
+  // setInterval(changeVirusPosition, 2000);
 
 
-  // Eventlistner listening after a click on the virus and adding one to the score not complete yet
-  container.addEventListener("click",(e) =>{
-      if(e.target === virus) score++;
-  })
+    // Eventlistner listening after a click on the virus and adding one to the score
+    container.addEventListener("click",(e) =>{
+      if (e.target === virus) {
+        score++;
+        console.log('score ', score)
+        document.getElementById("users").innerHTML="Your score is: " + score + "point";
+        changeVirusPosition()
+      }
+    });
+    
+

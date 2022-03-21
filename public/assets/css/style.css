@@ -4,7 +4,7 @@
         width: 100vw;
     }
     
-    #app {
+    body {
         background-color: red;
         
     }
@@ -59,7 +59,5 @@
 #virus-icon {
     width: 45px;
     height: 45px;
-    grid-column-start: 4;
-    grid-row-start: 4;
     margin: auto;
 }
