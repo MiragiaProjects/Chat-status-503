@@ -35,10 +35,22 @@ const changeVirusPosition = () => {
     container.addEventListener("click",(e) =>{
       if (e.target === virus) {
         score++;
+
+        let min = 2;
+        let max = 5;
+
+        //Generate Random number between 5 - 10,
+        //SetTimeout för att det ska vara väntan mellan kilcksen 
+        let rand = Math.floor(Math.random() * (max - min + 1) + min); 
         console.log('score ', score)
+        setTimeout(() => { 
+        
         document.getElementById("users").innerHTML="Your score is: " + score + "point";
         changeVirusPosition()
+
+      },rand * 1000);
       }
+    
     });
     
 
