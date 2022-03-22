@@ -7,8 +7,7 @@ const messagesEl = document.querySelector('#messages'); // ul element containing
 const messageForm = document.querySelector('#message-form');
 const messageEl = document.querySelector('#message');
 
-//const opponentEl = document.querySelector('#opponent');
-
+let room = null;
 let username = null;
 
 const addMessageToChat = (message, ownMsg = false) => {
@@ -22,10 +21,13 @@ const addMessageToChat = (message, ownMsg = false) => {
 		liEl.classList.add('you');
 	}
 
+	// get human readable time
+	const time = moment(message.timestamp).format('HH:mm:ss');
+
 	// set content of `li` element
 	liEl.innerHTML = ownMsg
 		? message.content
-		: `<span class="user">${message.username}</span>: ${message.content}`;
+		: `<span class="user">${message.username}</span><span class="content">${message.content}</span><span class="time">${time}</span>`;
 
 	// append `li` element to `#messages`
 	messagesEl.appendChild(liEl);
@@ -33,7 +35,6 @@ const addMessageToChat = (message, ownMsg = false) => {
 	// scroll `li` element into view
 	liEl.scrollIntoView();
 }
-
 
 const addNoticeToChat = notice => {
 	const liEl = document.createElement('li');
@@ -43,6 +44,12 @@ const addNoticeToChat = notice => {
 
 	messagesEl.appendChild(liEl);
 	liEl.scrollIntoView();
+}
+
+// update user list
+const updateUserList = users => {
+	document.querySelector('#online-users').innerHTML =
+		Object.values(users).map(username => `<li><span class="fa-solid fa-user-astronaut"></span> ${username}</li>`).join("");
 }
 
 // listen for when a new user connects
@@ -55,6 +62,30 @@ socket.on('user:disconnected', (username) => {
 	addNoticeToChat(`${username} disconnected 😢`);
 });
 
+// listen for when we receive an updated list of online users (in this room)
+socket.on('user:list', users => {
+	updateUserList(users);
+})
+
+// listen for when we're disconnected
+socket.on('disconnect', (reason) => {
+	if (reason === 'io server disconnect') {
+		// reconnect to the server
+		socket.connect();
+	}
+	addNoticeToChat(`You were disconnected. Reason: ${reason} 😳`);
+});
+
+// listen for when we're reconnected
+socket.io.on('reconnect', () => {
+	// join room? but only if we were in the chat previously
+	if (username) {
+		socket.emit('user:joined', username, room, (status) => {
+			addNoticeToChat(`You reconnected 🥳`);
+		});
+	}
+});
+
 // listen for incoming messages
 socket.on('chat:message', message => {
 	console.log("Someone said something:", message);
@@ -62,14 +93,17 @@ socket.on('chat:message', message => {
 	addMessageToChat(message);
 });
 
-// get username from form and emit `user:joined` and then show chat
+// get username and room from form and emit `user:joined` and then show chat
 usernameForm.addEventListener('submit', e => {
 	e.preventDefault();
 
+	room = usernameForm.room.value;
 	username = usernameForm.username.value;
 
+	console.log(`User ${username} wants to join room '${room}'`);
+
 	// emit `user:joined` event and when we get acknowledgement, THEN show the chat
-	socket.emit('user:joined', username, (status) => {
+	socket.emit('user:joined', username, room, (status) => {
 		// we've received acknowledgement from the server
 		console.log("Server acknowledged that user joined", status);
 
@@ -80,8 +114,14 @@ usernameForm.addEventListener('submit', e => {
 			// show chat view
 			chatWrapperEl.classList.remove('hide');
 
+			// set room name as chat title
+			document.querySelector('#chat-title').innerText = status.roomName;
+
 			// focus on inputMessage
 			messageEl.focus();
+
+			// update list of users in room
+			updateUserList(status.users);
 		}
 	});
 });
@@ -96,7 +136,9 @@ messageForm.addEventListener('submit', e => {
 
 	const msg = {
 		username,
+		room,
 		content: messageEl.value,
+		timestamp: Date.now(),
 	}
 
 	// send message to server
