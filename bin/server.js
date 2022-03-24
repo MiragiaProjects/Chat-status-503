@@ -4,11 +4,11 @@
  * Module dependencies.
  */
 
- require('dotenv').config();
+require('dotenv').config();
 
- const app = require('../app');
- const debug = require('debug')('game:server');
- const http = require('http');
+const app = require('../app');
+const debug = require('debug')('game:server');
+const http = require('http');
 const socketio = require('socket.io');
 const { instrument } = require("@socket.io/admin-ui");
 const socket_controller = require('../controllers/socket_controller');
