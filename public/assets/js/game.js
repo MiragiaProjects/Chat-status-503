@@ -7,6 +7,7 @@ const messagesEl = document.querySelector('#messages'); // ul element containing
 const messageForm = document.querySelector('#message-form');
 const messageEl = document.querySelector('#message');
 
+
 let room = null;
 let username = null;
 
@@ -77,7 +78,7 @@ socket.on('disconnect', (reason) => {
 });
 
 // listen for when we're reconnected
-socket.io.on('reconnect', () => {
+socket.on('reconnect', () => {
 	// join room? but only if we were in the chat previously
 	if (username) {
 		socket.emit('user:joined', username, room, (status) => {
@@ -85,6 +86,11 @@ socket.io.on('reconnect', () => {
 		});
 	}
 });
+
+socket.on('damageDone', (username, time, row, column) => {
+	addNoticeToChat(`Damage done from ${username} in ${time}`);
+	makeVirus(row, column);
+})
 
 // listen for incoming messages
 socket.on('chat:message', message => {
@@ -100,7 +106,7 @@ usernameForm.addEventListener('submit', e => {
 	room = usernameForm.room.value;
 	username = usernameForm.username.value;
 
-	console.log(`User ${username} wants to join room '${room}'`);
+	console.log(`User ${username} wants to join room '${room}'s`);
 
 	// emit `user:joined` event and when we get acknowledgement, THEN show the chat
 	socket.emit('user:joined', username, room, (status) => {
@@ -114,8 +120,8 @@ usernameForm.addEventListener('submit', e => {
 			// show chat view
 			chatWrapperEl.classList.remove('hide');
 
-			// set room name as chat title
-			document.querySelector('#chat-title').innerText = status.roomName;
+			// set room name as chat title chat-title
+			document.querySelector('#room').innerText = status.roomName;
 
 			// focus on inputMessage
 			messageEl.focus();
@@ -165,18 +171,13 @@ messageForm.addEventListener('submit', e => {
 
  const virus = document.createElement("img");
  virus.setAttribute("id", "virus-icon");
- virus.setAttribute('style', `grid-column-start: ${randomColumnRow()}; grid-row-start: ${randomColumnRow()}`)
+ virus.setAttribute('style', `grid-column-start: ${8}; grid-row-start: ${8}`)
  virus.setAttribute("src", "assets/icons/corona-virus.svg");
  container.appendChild(virus);
 
- function randomColumnRow () {
-   return Math.ceil(Math.random() * 8)
- }
- 
- const changeVirusPosition = () => {
-	 const row = randomColumnRow();
-	 const column = randomColumnRow();
-   
+
+
+const changeVirusPosition = (row, column) => {
 	 virus.style.gridColumnStart = column;
 	 virus.style.gridRowStart = row;
    }
@@ -185,7 +186,7 @@ messageForm.addEventListener('submit', e => {
  
  let clickedTime, createdTime, reactionTime;
  
- makeVirus = () => {
+ makeVirus = (row, column) => {
    let time = Math.random();
    time=time*5000;
    
@@ -202,20 +203,22 @@ messageForm.addEventListener('submit', e => {
 	 let left=Math.random();
 	 left=left*500;
 	 
-	 changeVirusPosition();
+	 changeVirusPosition(row, column);
 	 
 	 document.getElementById("virus-icon").style.display = "block";
 	 createdTime = Date.now();
    }, time);
  }
- 
+
  document.getElementById("virus-icon").onclick = function() {
    clickedTime = Date.now();
    reactionTime = (clickedTime-createdTime)/1000;
    document.getElementById("time").innerHTML = reactionTime;
-   this.style.display = "none";
-   makeVirus();
+	 this.style.display = "none";
+	 socket.emit('user:fire', username, room, reactionTime);
  }
- 
- makeVirus();
 
+
+ 
+ 
+ makeVirus(2,2);

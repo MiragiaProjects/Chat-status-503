@@ -3,7 +3,6 @@
  * Socket Controller
  */
 
-
  const debug = require('debug')('game:socket_controller');
  let io = null; // socket.io server instance
 
@@ -81,6 +80,86 @@ const handleUserJoined = function(username, room_id, callback) {
 	this.broadcast.to(room.id).emit('user:list', room.users);
 }
 
+
+
+
+
+
+// Handle when a user has joined the chat
+const handleUserFire = function(username, room_id, time) {
+	
+
+
+	// debug(`User ${username} with socket id ${this.id} wants to join room '${room_id}'`);
+	function randomColumnRow () {
+		return Math.ceil(Math.random() * 8)
+	}
+ 
+	const row = randomColumnRow();
+	const column = randomColumnRow();
+
+	const room = rooms.find(rom => rom.id === room_id)
+
+	if (!room.points) {
+        room.points = []
+    }
+    const point = { 
+		username: username,point: time
+    }
+	
+    room.points.push(point)
+    console.log({rooms});
+
+	room.points.forEach(element => {
+		console.log(element);
+		if (username === element.username) {
+			element.point
+			console.log(room.points);
+		}
+
+		room.users[this.id] = username;
+
+
+
+// broadcast list of users in room to all connected sockets EXCEPT ourselves
+
+        this.broadcast.to(room.id).emit('room:point', username);
+
+        console.log(point)
+	});
+	
+
+	
+		//  { --> Room
+		// 	id: 'room1',
+		// 	name: 'Room one',
+		// 	users: {
+		// 		gsg2NtXO0QOuDnPwAAAF: 'Heidi',
+		// 		yZk0ubEbX_hP72jmAAAH: 'daniel'
+		// 	}
+		// }
+
+  
+	console.log({room, username, time})
+	io.to(room.id).emit('damageDone', username, time, row, column);
+
+		
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const handleChatMessage = function(message) {
 	debug('Someone said something: ', message);
 
@@ -93,7 +172,14 @@ module.exports = function(socket, _io) {
 
 	debug('a new client has connected', socket.id);
 
+
+
 	io.emit("new-connection", "A new user connected");
+
+	io.emit("new-connection", "A new user connected");
+
+	// io.to(room).emit();
+	socket.on('user:fire', handleUserFire)
 
 	// handle user disconnect
 	socket.on('disconnect', handleDisconnect);
