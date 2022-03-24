@@ -80,6 +80,7 @@ const handleUserFire = function(username, room_id, time) {
 	const column = randomColumnRow();
 
 	const room = rooms.find(rom => rom.id === room_id)
+
 	/*
 	if (!room.points) {
         room.points = []
@@ -91,21 +92,17 @@ const handleUserFire = function(username, room_id, time) {
     room.points.push(point)
     console.log({rooms});
 
-	room.points.forEach(element => {
-		console.log(element);
-		if (username === element.username) {
-			element.point
-			console.log(room.points);
+	let userpoint;
+
+	room.points.forEach(userpoint => {	
+
+		console.log(userpoint);
+		if (username === userpoint.username) {
+		userpoint = userpoint + Element.point
 		}
-
-		room.users[this.id] = username;
-
-        this.broadcast.to(room.id).emit('room:point', username);
 
         console.log(point)
 	});
-	*/
-
 	
 		//  { --> Room
 		// 	id: 'room1',
@@ -116,12 +113,13 @@ const handleUserFire = function(username, room_id, time) {
 		// 	}
 		// }
 
-  
+	*/
 	console.log({room, username, time})
 	io.to(room.id).emit('damageDone', username, time, row, column);
-
+	//io.to(room.id).emit('room:point', username, userpoint);
 		
 }
+
 
 module.exports = function(socket, _io) {
 	io = _io;

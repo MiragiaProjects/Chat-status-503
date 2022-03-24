@@ -57,6 +57,14 @@ socket.on('damageDone', (username, time, row, column) => {
 	makeVirus(row, column);
 })
 
+/*
+socket.on('room:points', (username, userpoint, row, column) => {
+	addNoticeToChat(`Damage done from ${username} in ${userpoint}`);
+	makeVirus(row, column);
+})
+*/
+
+
 usernameForm.addEventListener('submit', e => {
 	e.preventDefault();
 
