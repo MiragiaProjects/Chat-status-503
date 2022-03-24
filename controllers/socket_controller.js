@@ -133,7 +133,7 @@ module.exports = function(socket, _io) {
 	io.emit("new-connection", "A new user connected");
 
 	// io.to(room).emit();
-	socket.on('user:fire', handleUserFire)
+	socket.on('user:fire', handleUserFire);
 
 	// handle user disconnect
 	socket.on('disconnect', handleDisconnect);
