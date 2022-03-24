@@ -110,20 +110,19 @@ const handleUserFire = function(username, room_id, time) {
     room.points.push(point)
     console.log({rooms});
 
-	room.points.forEach(element => {
-		console.log(element);
-		if (username === element.username) {
-			element.point
-			console.log(room.points);
+	let userpoint;
+	room.points.forEach(userpoint => {
+		console.log(userpoint);
+		if (username === userpoint.username) {
+			userpoint=userpoint + Element.point 
 		}
-
-		room.users[this.id] = username;
 
 
 
 // broadcast list of users in room to all connected sockets EXCEPT ourselves
 
-        this.broadcast.to(room.id).emit('room:point', username);
+        //this.broadcast.to(room.id).emit('room:point', username);
+		
 
         console.log(point)
 	});
@@ -141,10 +140,11 @@ const handleUserFire = function(username, room_id, time) {
 
   
 	console.log({room, username, time})
-	io.to(room.id).emit('damageDone', username, time, row, column);
-
-		
-}
+	io.to(room.id).emit('damageDone', username, time, row, column,);
+	io.to(room.id).emit('room:point', username, userpoint);
+	
+	
+};
 
 
 
@@ -179,7 +179,7 @@ module.exports = function(socket, _io) {
 	io.emit("new-connection", "A new user connected");
 
 	// io.to(room).emit();
-	socket.on('user:fire', handleUserFire)
+	socket.on('user:fire', handleUserFire);
 
 	// handle user disconnect
 	socket.on('disconnect', handleDisconnect);

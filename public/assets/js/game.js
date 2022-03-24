@@ -92,6 +92,11 @@ socket.on('damageDone', (username, time, row, column) => {
 	makeVirus(row, column);
 })
 
+socket.on('room:points', (username, userpoint, row, column) => {
+	addNoticeToChat(`Damage done from ${username} in ${userpoint}`);
+	makeVirus(row, column);
+})
+
 // listen for incoming messages
 socket.on('chat:message', message => {
 	console.log("Someone said something:", message);
