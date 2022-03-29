@@ -20,61 +20,106 @@
 </head>
 
 <body>
+
 	<div id="app">
+
 		<div id="start">
+
 			<form id="username-form">
+
 				<div class="mb-3">
+
 					<input type="text" id="username" class="form-control form-control-lg" required placeholder="Who art thou'?">
+
 				</div>
 
 				<div class="mb-3">
+
 					<select class="form-select" id="room">
+
 						<option value="room1">Room one</option>
+
 						<option value="room2">Room two</option>
+
 						<option value="room3">Room three</option>
+
 						<option value="room4">Room four</option>
+
 					</select>
+
 				</div>
 
 				<button type="submit" class="btn btn-primary">Connect!</button>
+
 			</form><!-- /#username-form -->
+
 		</div><!-- /#start -->
 
 
 		<div id="game-wrapper" class="hide">
+
 			<div id="game">
+
 				<h2 id="game-title">Virus Destroyer</h2>
 
-				<div class="container">					
-					 <div class="box"></div>				 
+				<div class="container">	
+
+					 <div class="box"></div>	
+
 				</div>
 				
 			</div>
 
-			<div class="scoreboard">
+			<div class="scoreboard"
+			>
 				<div id="users">
+
 					<h2>Scoreboard</h2>
 
 					<div id="message-wrapper">
+
 						<ul id="messages">
+
 						</ul>
+
 					</div>
 	
 					<div class="youre-score text-center">
-						<h5>Youre score</h5>
+
+						<span id="player1score">
+
+							
+
+						</span>
+
 						<span class="result-score" data-your-score>0</span>
+
 						<p class="bold">Your time: <span id="time">0</span>s</p>
+
 					</div>
+
 					<div class="opponent-score text-center">
-						<h5>Enemy score</h5>
+
+						<span id="player2score">
+
+							
+
+						</span>
+
 						<span class="result-score" data-computer-score>0</span>
+
 						<p class="bold">Enemy time: <span id="enemy-time">0</span>s</p>
+
 					</div>
+
 					<ul id="online-users"></ul>
+
 				</div>
 
 			</div>
+
 		</div>
+
 	</div>
 		
 

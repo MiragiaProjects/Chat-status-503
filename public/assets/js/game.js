@@ -4,6 +4,8 @@ const startEl = document.querySelector('#start');
 const chatWrapperEl = document.querySelector('#game-wrapper');
 const usernameForm = document.querySelector('#username-form');
 const messagesEl = document.querySelector('#messages');
+const player1El = document.querySelector('#player1score');
+const player2El = document.querySelector('#player2score');
 
 let room = null;
 let username = null;
@@ -18,14 +20,36 @@ const addNoticeToChat = notice => {
 	liEl.scrollIntoView();
 }
 
+const addPlayer1ScoreToBoard = notice => {
+	const h5El = document.createElement('h5');
+
+	h5El.classList.add('notice');
+
+	h5El.innerText = notice;
+
+	player1El.appendChild(h5El);
+
+}
+
+const addPlayer2ScoreToBoard = notice => {
+	const h5El = document.createElement('h5');
+
+	h5El.classList.add('notice');
+
+	h5El.innerText = notice;
+
+	player2El.appendChild(h5El);
+
+}
+
 const updateUserList = users => {
 	document.querySelector('#online-users').innerHTML =
 		Object.values(users).map(username => `<li><span class="fa-solid fa-user-astronaut"></span> ${username}</li>`).join("");
 }
 
 // listen for when a new user connects
-socket.on('user:connected', (username) => {
-	addNoticeToChat(`${username} connected 🥳`);
+socket.on('user:connected', (username, player1, player2) => {
+	addNoticeToChat(`${username}, ${player1}, ${player2} connected 🥳`);
 });
 
 socket.on('user:disconnected', (username) => {
@@ -57,12 +81,21 @@ socket.on('damageDone', (username, time, row, column) => {
 	makeVirus(row, column);
 })
 
+socket.on('playerScore',(player1Score, player2Score) => {
+	addPlayer1ScoreToBoard(`Score:${player1Score}`);
+	addPlayer2ScoreToBoard(`Score:${player2Score}`);
+})
+
 /*
 socket.on('room:points', (username, userpoint, row, column) => {
 	addNoticeToChat(`Damage done from ${username} in ${userpoint}`);
 	makeVirus(row, column);
 })
 */
+socket.on('playerslist',(player1, player2,) => {
+addNoticeToChat(`${player1}player1 ${player2}player2`)
+console.log(player1, player2);
+})
 
 
 usernameForm.addEventListener('submit', e => {
@@ -109,6 +142,12 @@ const changeVirusPosition = (row, column) => {
 	 virus.style.gridRowStart = row;
    	}
 
+	let player1Score = null;
+	let player1Time = [];
+
+	let player2Score = null;
+	let player2Time = [];
+
  
  
 let clickedTime, createdTime, reactionTime;
@@ -143,6 +182,7 @@ document.getElementById("virus-icon").onclick = function() {
 	document.getElementById("time").innerHTML = reactionTime;
 		this.style.display = "none";
 		socket.emit('user:fire', username, room, reactionTime);
+		
 }
 
 
