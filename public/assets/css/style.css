@@ -1,119 +1,87 @@
 
-#app,
-#start,
-#game-wrapper {
+
+.hide {
+	display: none !important;
+}
+
+h1 {
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 10%;
+    font-weight: bold;
+}
+
+#userForm {
+    display: flex;
+    justify-content: center;
+    margin-top: 20%;
+}
+
+.userInput {
+    width: 40%;
+    padding: 1%;
+    border-radius: 20px;
+    border: 2px solid black;
+}
+
+.start-btn {
+    width: 20%;
+    background-color: brown;
+    border: 2px solid black;
+    border-radius: 20px;
+}
+
+.virus-buster-img {
+    width: 40%;
+    height: 40%;
+}
+
+.waitForOpponent {
+	height: 100vh;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	align-items: center;
+	gap: 2rem;
+}
+
+.game {
 	height: 100vh;
 	width: 100vw;
 }
-    
-body {
-    background-color: red;
-    
-}
 
-.hide {
-    display: none !important;
-}
-
-#start {
-    display: flex;
-    align-items: center;
-}
-
-#username-form {
-    margin: 0 auto;
-    text-align: center;
-}
-
-
-#game-wrapper {
-    display: flex;
-}
-
-#game {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    border-right: 1px solid #555;
-}
-
-#game h2 {
-    background-color: rgb(70, 156, 84);
-    padding: 0.5rem 0.75rem;
-    color: white;
-}
-
-#users {
-    flex-basis: 20%;
-}
-
-#users h2 {
-    background-color: rgb(70, 156, 84);
-    padding: 0.5rem 0.75rem;
-    color: white;
-}
-
-
-#message-wrapper {
-	flex-grow: 1;
-}
-
-#messages {
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: column;
-	list-style: none;
-	padding: 0;
-}
-
-
-#messages .message {
-	background-color: lightgray;
-	border-radius: 0.75rem;
-	margin: 0.1rem;
-	padding: 0.5rem 0.75rem;
-	align-self: flex-start;
-}
-
-
-#users {
-	flex-basis: 20%;
-}
-
-#users h2 {
-	background-color: cornflowerblue;
-	padding: 0.5rem 0.75rem;
+.scoreboard-color {
+	background-color:  brown;
 	color: white;
 }
 
-#users ul {
-	margin: 0;
-	padding: 0.5rem 0.75rem;
-	list-style: none;
+.scoreBoard {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	height: 80vh;
 }
 
-.container {
-    display: grid;
-    grid-template-columns: 75px 75px 75px 75px 75px 75px 75px 75px;
-    grid-template-rows: 75px 75px 75px 75px 75px 75px 75px;
-    border: 2px solid pink;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    background-image: url("https://drive.google.com/uc?export=download&id=1M42mkJo_ILpyt1penWJLFAGwyycD9oKq");
-        background-repeat: no-repeat;
-        background-size: cover;
-        height: 100vh;
-        /*text-align: center;*/
-        
-    }
-
-.scoreboard{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-
+.box {
+	height: 21%;
+	width: 21%;
 }
 
-#virus-icon {
-    width: 45px;
-    height: 45px;
-    margin: auto;
+.virus {
+	background-image: url('../icons/corona-virus.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
 }
+
+#areYouReady {
+	height: 100%;
+	background-color: rgba(100,100,100,0.3);
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	align-items: center;
+	font-size: 2rem;
+	border-radius: 10px;
+}
+

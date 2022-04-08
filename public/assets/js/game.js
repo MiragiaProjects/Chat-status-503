@@ -1,191 +1,86 @@
+/**
+ * 
+ * Game js
+ */
+
+// Socket variable
 const socket = io();
 
-const startEl = document.querySelector('#start');
-const chatWrapperEl = document.querySelector('#game-wrapper');
-const usernameForm = document.querySelector('#username-form');
-const messagesEl = document.querySelector('#messages');
-const player1El = document.querySelector('#player1score');
-const player2El = document.querySelector('#player2score');
+// Before you enter the game
+const frontPage = document.querySelector('#frontPage');
+const userForm = document.querySelector('#userForm');
+const waitForOpponent = document.querySelector('#waitForOpponent');
 
-let room = null;
+// When you enter the game
+const game = document.querySelector('#game');
+const playingFieldEl = document.querySelector('#gameAria');
+const areYouReady = document.querySelector('#areYouReady');
+
+// div boxes to use as a position for virus
+const boxes = document.querySelectorAll('.box');
+
+
+// To identify the username and the opponent.
 let username = null;
-
-const addNoticeToChat = notice => {
-	const liEl = document.createElement('li');
-	liEl.classList.add('notice');
-
-	liEl.innerText = notice;
-
-	messagesEl.appendChild(liEl);
-	liEl.scrollIntoView();
-}
-
-const addPlayer1ScoreToBoard = notice => {
-	const h5El = document.createElement('h5');
-
-	h5El.classList.add('notice');
-
-	h5El.innerText = notice;
-
-	player1El.appendChild(h5El);
-
-}
-
-const addPlayer2ScoreToBoard = notice => {
-	const h5El = document.createElement('h5');
-
-	h5El.classList.add('notice');
-
-	h5El.innerText = notice;
-
-	player2El.appendChild(h5El);
-
-}
-
-const updateUserList = users => {
-	document.querySelector('#online-users').innerHTML =
-		Object.values(users).map(username => `<li><span class="fa-solid fa-user-astronaut"></span> ${username}</li>`).join("");
-}
-
-// listen for when a new user connects
-socket.on('user:connected', (username, player1, player2) => {
-	addNoticeToChat(`${username}, ${player1}, ${player2} connected 🥳`);
-});
-
-socket.on('user:disconnected', (username) => {
-	addNoticeToChat(`${username} disconnected 😢`);
-});
-
-socket.on('user:list', users => {
-	updateUserList(users);
-})
-
-socket.on('disconnect', (reason) => {
-	if (reason === 'io server disconnect') {
-		// reconnect to the server
-		socket.connect();
-	}
-	addNoticeToChat(`You were disconnected. Reason: ${reason} 😳`);
-});
-
-socket.on('reconnect', () => {
-	if (username) {
-		socket.emit('user:joined', username, room, (status) => {
-			addNoticeToChat(`You reconnected 🥳`);
-		});
-	}
-});
-
-socket.on('damageDone', (username, time, row, column) => {
-	addNoticeToChat(`${username} killed the virus in ${time}s`);
-	makeVirus(row, column);
-})
-
-socket.on('playerScore',(player1Score, player2Score) => {
-	addPlayer1ScoreToBoard(`Score:${player1Score}`);
-	addPlayer2ScoreToBoard(`Score:${player2Score}`);
-})
-
-/*
-socket.on('room:points', (username, userpoint, row, column) => {
-	addNoticeToChat(`Damage done from ${username} in ${userpoint}`);
-	makeVirus(row, column);
-})
-*/
-socket.on('playerslist',(player1, player2,) => {
-addNoticeToChat(`${player1}player1 ${player2}player2`)
-console.log(player1, player2);
-})
+let opponent = null;
 
 
-usernameForm.addEventListener('submit', e => {
+// Event listener for when a user submits the name form
+userForm.addEventListener('submit', (e) => {
 	e.preventDefault();
-
-	room = usernameForm.room.value;
-	username = usernameForm.username.value;
-
-	console.log(`User ${username} wants to join room '${room}'s`);
-
-	socket.emit('user:joined', username, room, (status) => {
-
-		console.log("Server acknowledged that user joined", status);
-
+ 
+	// Take the value(name) when a user submits
+	username = userForm.username.value;
+	
+	// Let socket know that a user joined
+	socket.emit('user:joined', username, (status) => {
+		
 		if (status.success) {
 
-			startEl.classList.add('hide');
+			// Hide frontPage
+			frontPage.classList.add('hide');
 
-			chatWrapperEl.classList.remove('hide');
+			// Show gameAria
+			waitForOpponent.classList.remove('hide');
 
-			document.querySelector('#room').innerText = status.roomName;
-
-			updateUserList(status.users);
+			// If the status is true start the game
+			if (status.startGame) {
+				waitForOpponent.classList.add('hide');
+				game.classList.remove('hide');
+			}
 		}
-	});
+
+	})
 });
 
- "use strict";  
- //const socket = io();
- const container = document.querySelector(".container");
- const users = document.querySelector(".users");
- // const usersScore = document.querySelector(".usersCore")
+// users out both users name on the field
+socket.on('users:names', (players) => {
 
- const virus = document.createElement("img");
- virus.setAttribute("id", "virus-icon");
- virus.setAttribute('style', `grid-column-start: ${8}; grid-row-start: ${8}`)
- virus.setAttribute("src", "assets/icons/corona-virus.svg");
- container.appendChild(virus);
+	// The users own name
+	username = userForm.username.value;
 
+	// Make users to an object and put them into an emty array
+	const users = Object.values(players);
+	const playerNames = [];
 
+	// For each user put them into the array
+	users.forEach( (player) => {
+		playerNames.push(player.username);
+	} );
 
-const changeVirusPosition = (row, column) => {
-	 virus.style.gridColumnStart = column;
-	 virus.style.gridRowStart = row;
-   	}
+	// Take out your ownname (playerOne) from the array, so only the opponent name is left
+	const playerOne = playerNames.indexOf(username);
+	// used splice to cut it out
+	playerNames.splice(playerOne, 1);
+	opponent = playerNames;
 
-	let player1Score = null;
-	let player1Time = [];
+});
 
-	let player2Score = null;
-	let player2Time = [];
+// To thart the game
+socket.on('start:game', () => {
 
- 
- 
-let clickedTime, createdTime, reactionTime;
- 
-makeVirus = (row, column) => {
-	let time = Math.random();
-	time=time*5000;
-   
-   	setTimeout(function() {
-		if (Math.random() > 0.5) {
-		document.getElementById("virus-icon").style.borderRadius="100px";
-		} else {
-		document.getElementById("virus-icon").style.borderRadius="0";
-		}
-		
-		let top=Math.random();
-		top=top*300;
-		
-		let left=Math.random();
-		left=left*500;
-		
-		changeVirusPosition(row, column);
-		
-		document.getElementById("virus-icon").style.display = "block";
-		createdTime = Date.now();
-	}, time);
- }
+	// When a opponent connect and show game
+	waitForOpponent.classList.add('hide');
+	game.classList.remove('hide');
 
-document.getElementById("virus-icon").onclick = function() {
-	clickedTime = Date.now();
-	reactionTime = (clickedTime-createdTime)/1000;
-	document.getElementById("time").innerHTML = reactionTime;
-		this.style.display = "none";
-		socket.emit('user:fire', username, room, reactionTime);
-		
-}
-
-
- 
- 
-makeVirus(2,2);
+});

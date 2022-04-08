@@ -1,187 +1,92 @@
-/***
- * 
+/**
  * Socket Controller
  */
 
 const debug = require('debug')('game:socket_controller');
-let io = null; 
 
-// list of rooms and their connected users
-const users = {
-}
-const rooms = [
-	{
-		id: 'room1',
-		name: 'Room one',
-		users: {},
-		player1:[],
-		player2:[],
-		player1Time:[],
-		player2Time:[],
-		player1Score:[],
-		player2Score:[],
-	},
-	{
-		id: 'room2',
-		name: 'Room two',
-		users: {},
-		player1:[],
-		player2:[],
-		player1Time:[],
-		player2Time:[],
-		player1Score:[],
-		player2Score:[],
-	},
-	{
-		id: 'room3',
-		name: 'Room three',
-		users: {},
-		player1:[],
-		player2:[],
-		player1Time:[],
-		player2Time:[],
-		player1Score:[],
-		player2Score:[],
-	},
-	{
-		id: 'room4',
-		name: 'Room four',
-		users: {},
-		player1:[],
-		player2:[],
-		player1Time:[],
-		player2Time:[],
-		player1Score:[],
-		player2Score:[],
-	},
-];
+let io = null;
 
+// Empty array with rooms
+const rooms = [];
 
+// Existing rooms
+let roomsToJoin = 0;
 
-const handleDisconnect = function() {
-	debug(`Client ${this.id} disconnected :(`);
+// How many are in the rooms
+let joinRooms = 0;
 
-	const room = rooms.find(gameRoom => gameRoom.users.hasOwnProperty(this.id));
+// Handle when a user join the room
+const handleUserJoined = function(username, callback) {
+	// Can the game start?
+	let startGame = false;
 
-	if (!room) {
-		return;
+	// How many has joined the room?
+	if (joinRooms === 0) {
+		rooms.push({
+			// the room id and add one when a user joins
+			room_id: roomsToJoin++,
+
+			// How many users is in the current room
+			currentPlayers: 0,
+
+			// Object property to hold info about the users that is in the room
+			players: {},
+		});
 	}
 
-	this.broadcast.to(room.id).emit('user:disconnected', room.users[this.id]);
+	// Add players to the room
+	const currentRoom = rooms[rooms.length - 1];
+	currentRoom.currentPlayers++;
 
-	delete room.users[this.id];
+	// Have the socket client to join the current room
+	this.join(currentRoom);
 
-	this.broadcast.to(room.id).emit('user:list', room.users);
-}
+	// Each player object in a room holds info aboiut their name, current score and their previous reaction time
+	currentRoom.players[this.id] = {
+		username,
+	};
 
+	// Add a player
+	joinRooms++;
+	// If they are two => start the game
+	if (joinRooms === 2) {
+		// Set the rooms to 0 so other can make a room with two players
+		joinRooms = 0;
 
-// do when a user joins the game
-const handleUserJoined = function(username, room_id, callback) {
-	debug(`User ${username} with socket id ${this.id} wants to join room '${room_id}'`);
+		// Start the game
+		startGame = true;
 
-	// const room = rooms.find(gameRoom => gameRoom.id === room_id);
+		// Print the names to socket
+		io.in(currentRoom).emit('users:names', currentRoom.players);
+		// broadcast that the game starts
 
-	// if (room.player2 == 0) {
-	// 	return;
-	// } else {
-	
-	this.join(room_id);
+		this.broadcast.to(currentRoom).emit('start:game');
+	} 
 
-	const room = rooms.find(gameRoom => gameRoom.id === room_id);
-
-	
-	// ge en socket till room's `users` object
-	room.users[this.id] = username;
-	// låt den andra veta att någon annan gått med i gamet
-	
-
-	if (room.player1 == 0) {
-		room.player1.push(room.users[this.id])
-	}	else {
-		room.player2.push(room.users[this.id])
-	}
-
-	debug(`${room.player1}player1`);
-	debug(`${room.player2}player2`);
-
-
+	// Callback to client
 	callback({
 		success: true,
-		roomName: room.name,
-		users: room.users
+		startGame,
 	});
-	this.broadcast.to(room.id).emit('user:connected', username, room.player1, room.player2);
-
-	this.broadcast.to(room.id).emit('playerslist', room.player1, room.player2, username);
-
-	this.broadcast.to(room.id).emit('user:list', room.users);
-//}
 }
 
-// Handle killing the virus
-const handleUserFire = function(username, room_id, time) {
-	let clickedTime, createdTime, reactionTime;
-	 debug(`User ${username} with socket id ${this.id} wants to join room '${room_id}'`);
-	function randomColumnRow () {
-		return Math.ceil(Math.random() * 8)
+// When a user disconnects
+const handleDisconnect = function() {
+
+	// Find the sockets room
+	const room = rooms.find(lobby => lobby.players.hasOwnProperty(this.id));
+
+	// If socket is not in a room, do nothing and return
+	if(!room) {
+		return;
 	}
-
-
-	const row = randomColumnRow();
-	const column = randomColumnRow();
-
-	const room = rooms.find(gameRoom => gameRoom.id === room_id)
-
-
-	clickedTime = Date.now();
-	reactionTime = (clickedTime-createdTime)/1000;
-
-	
-	if (username == room.player1 ) {
-		room.player1Time.push(time);
-	
-	} else {
-		room.player2Time.push(time);
-	}
-	debug(`${room.player1Time} ; ${room.player2Time}`)
-
-
-	if (room.player1Time.length+1 < room.player2Time.length+1) {
-		room.player1Score ++;
-	} else {
-		room.player2Score ++;
-	}
-	
-	debug(`${room.player1Score} player1Score ; ${room.player2Score} player2Score`)
-
-
-	io.to(room.id).emit('playerScore', room.player1Score, room.player2Score)
-	io.to(room.id).emit('damageDone', username, time, row, column);
-	//io.to(room.id).emit('room:point', username, userpoint);
-	debug(`User ${username} time ${time}`);
-
-}
-
-const handleTime = function(time) {
-	debug(`${time}`)
-
-	const room = rooms.find(gameRoom => gameRoom.id === room_id)
-
-	io.to(room.id).emit('user:time', time);
 }
 
 
+// Exporting functions
 module.exports = function(socket, _io) {
 	io = _io;
-
 	debug('a new client has connected', socket.id);
-
-	io.emit("new-connection", "A new user connected");
-
-	io.emit("new-connection", "A new user connected");
-
-	// io.to(room).emit();
-	socket.on('user:fire', handleUserFire);
 
 	// handle user disconnect
 	socket.on('disconnect', handleDisconnect);
@@ -189,6 +94,4 @@ module.exports = function(socket, _io) {
 	// handle user joined
 	socket.on('user:joined', handleUserJoined);
 
-	//
-	socket.on('user:time', handleTime);
 }

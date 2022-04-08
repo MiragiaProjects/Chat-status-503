@@ -5,132 +5,93 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Virus Destroyer</title>
+	<title>Virus Busters</title>
 
 	<!-- Bootstrap 5 styles -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 	<!-- Styles -->
-	<link rel="stylesheet" href="/assets/css/style.css">
-
-    <!-- fontawsome -->
-	<script src="https://kit.fontawesome.com/48b6e6f532.js" crossorigin="anonymous"></script>
-
-
+	<link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
+	<section id="beforeGameStart">
+		<div id="frontPage" class="frontPage">
+			<h1 class="text-center">Who you gonna call? - Virusbusters</h1>
+			<!-- 
+			<p id="username-error" class="alert alert-danger hide"></p> -->
+	
+			<form id="userForm" class="input-form mb-3">
 
-	<div id="app">
+				<input type="text" id="username" class="userInput" placeholder="Username">
 
-		<div id="start">
+				<button type="submit" class="start-btn">Start game</button>
 
-			<form id="username-form">
+			</form>
 
-				<div class="mb-3">
+			<div class="d-flex justify-content-center">
+				<img src="/assets/img/front-image.jpeg"  class="virus-buster-img" alt="image of virus busters">
+			</div>
+	
+		</div>
+	
+		<div id="waitForOpponent" class="waitForOpponent hide">
+			<h2>And now we wait for opponent</h2>
+		</div>
+	</section>
 
-					<input type="text" id="username" class="form-control form-control-lg" required placeholder="Who art thou'?">
+	<section id="game" class="game hide">
+		<h1 class="text-center">Virusbusters</h1>
+		<div class="container d-flex">
 
-				</div>
-
-				<div class="mb-3">
-
-					<select class="form-select" id="room">
-
-						<option value="room1">Room one</option>
-
-						<option value="room2">Room two</option>
-
-						<option value="room3">Room three</option>
-
-						<option value="room4">Room four</option>
-
-					</select>
-
-				</div>
-
-				<button type="submit" class="btn btn-primary">Connect!</button>
-
-			</form><!-- /#username-form -->
-
-		</div><!-- /#start -->
-
-
-		<div id="game-wrapper" class="hide">
-
-			<div id="game">
-
-				<h2 id="game-title">Virus Destroyer</h2>
-
-				<div class="container">	
-
-					 <div class="box"></div>	
-
-				</div>
-				
+			<div id="gameAria" class="col-9 gameAria">
+				<div class="box hide" id="box1"></div>
+				<div class="box hide" id="box2"></div>
+				<div class="box hide" id="box3"></div>
+				<div class="box hide" id="box4"></div>
+				<div class="box hide" id="box5"></div>
+				<div class="box hide" id="box6"></div>
+				<div class="box hide" id="box7"></div>
+				<div class="box hide" id="box8"></div>
+				<div class="box hide" id="box9"></div>
+				<div class="box hide" id="box10"></div>
+				<div class="box hide" id="box11"></div>
+				<div class="box hide" id="box12"></div>
+				<div class="box hide" id="box13"></div>
+				<div class="box hide" id="box14"></div>
+				<div class="box hide" id="box15"></div>
+				<div class="box hide" id="box16"></div>
 			</div>
 
-			<div class="scoreboard"
-			>
-				<div id="users">
-
-					<h2>Scoreboard</h2>
-
-					<div id="message-wrapper">
-
-						<ul id="messages">
-
-						</ul>
-
-					</div>
-	
-					<div class="youre-score text-center">
-
-						<span id="player1score">
-
-							
-
-						</span>
-
-						<span class="result-score" data-your-score>0</span>
-
-						<p class="bold">Your time: <span id="time">0</span>s</p>
-
-					</div>
-
-					<div class="opponent-score text-center">
-
-						<span id="player2score">
-
-							
-
-						</span>
-
-						<span class="result-score" data-computer-score>0</span>
-
-						<p class="bold">Enemy time: <span id="enemy-time">0</span>s</p>
-
-					</div>
-
-					<ul id="online-users"></ul>
-
+			<div id="scoreBoard" class="scoreBoard scoreboard-color col-3">
+				<div id="scores" class="my-4">
+					<h4 id="user">Player score: 0</h4>
+					<h4 id="opponent">Opponent score: 0</h4>
 				</div>
-
+				<div id="playersTime" class="my-4">	
+					<div id="userTime">
+						<p>Your Time</p>
+						<h5>00:00</h5>
+					</div>
+					<div id="opponentTime">
+						<p>Opponent Time</p>
+						<h5>00:00</h5>
+					</div>
+				</div>
 			</div>
 
 		</div>
-
-	</div>
-		
-
+	</section>
 
 	<!-- Bootstrap 5 script -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js" integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 	<!-- Socket.IO -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
 
-	<!-- Game script -->
-	<script src="/assets/js/game.js"></script>
+	<!-- Chat script -->
+	<script src="./assets/js/game.js"></script>
 </body>
 </html>
